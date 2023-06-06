@@ -1,4 +1,9 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { developmentChains } from "../hardhat.config.helper";
+import { network } from "hardhat";
+import { verify } from "../utils/verify";
+
+const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
 
 const HiosNft = async (hre: HardhatRuntimeEnvironment) => {
     const {
@@ -15,6 +20,10 @@ const HiosNft = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
     });
 
+    if (!developmentChains.includes(network.name) && etherscanApiKey) {
+        await verify(hiosNft.address, []);
+        log("Contract verified.");
+    }
     log("Hios Token deployed");
 };
 
