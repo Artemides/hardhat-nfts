@@ -11,8 +11,10 @@ const HiosNft = async (hre: HardhatRuntimeEnvironment) => {
     log("deploying nft");
     const hiosNft = await deploy("HiosNft", {
         from: deployer,
+        args: [],
         log: true,
     });
+
     log("Hios Token deployed");
 };
 
