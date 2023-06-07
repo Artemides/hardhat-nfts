@@ -27,5 +27,35 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     mapping(uint256 => address) _tokenApprovals;
     mapping(address => mapping(address => bool)) _operatorApprovals;
 
-    constructor() {}
+    constructor(string memory name_, string memory symbol_) {
+        _name = name_;
+        _symbol = symbol_;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC165, IERC165) returns (bool) {
+        return
+            interfaceId == type(IERC721).interfaceId ||
+            interfaceId == type(IERC721Metadata).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
+    function balanceOf(address owner) public view virtual override returns (uint256) {
+        require(owner != address(0), "ERC721: address zero is not a valid owner");
+        return _balanceOf[owner];
+    }
+
+    function ownerOf(uint256 tokenId) public view virtual override returns (address owner) {
+        owner = _ownerOf(tokenId);
+        require(owner != address(0), "ERC721: invalid token id");
+    }
+
+    function _ownerOf(uint256 tokenId) internal view returns (address) {
+        return _owners[tokenId];
+    }
+
+    function name() public view virtual override returns (string memory) {
+        return _name;
+    }
 }
