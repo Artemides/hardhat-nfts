@@ -1,7 +1,7 @@
 import { deployments, ethers, getNamedAccounts, network } from "hardhat";
 import { developmentChains } from "../hardhat.config.helper";
 import { HiosNft } from "../typechain-types";
-import { assert } from "chai";
+import { assert, expect } from "chai";
 
 !developmentChains.includes(network.name)
     ? describe.skip
@@ -18,6 +18,27 @@ import { assert } from "chai";
               it("Starts the nft's Id at 0", async () => {
                   const tokenCounter = await hiosNft.getTokenCounter();
                   assert.equal(tokenCounter.toNumber(), 0);
+              });
+          });
+
+          describe("Mint Hios Nft", () => {
+              it("Increases balances into 1 and sets the correctly the owner", async () => {
+                  const initialOwnerBalance = await hiosNft.balanceOf(deployer);
+                  await hiosNft.mint();
+                  const onwer = await hiosNft.ownerOf(0);
+                  const endOwnerBalance = await hiosNft.balanceOf(deployer);
+
+                  assert.equal(endOwnerBalance.toString(), initialOwnerBalance.add(1).toString());
+                  assert.equal(deployer, onwer);
+              });
+              it("emits transfer event when a token gets minted", async () => {
+                  expect(await hiosNft.mint()).to.emit("HiosNft", "Transfer");
+              });
+              it("Increases the token counter as it mints", async () => {
+                  const tokenCounter = await hiosNft.getTokenCounter();
+                  await hiosNft.mint();
+                  const afterMintTokenCounter = await hiosNft.getTokenCounter();
+                  assert.equal(afterMintTokenCounter.toString(), tokenCounter.add(1).toString());
               });
           });
       });
