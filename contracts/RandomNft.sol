@@ -14,6 +14,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
     }
 
     uint256 private s_tokenCounter;
+    string[] internal i_heliosUris;
 
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
 
@@ -33,13 +34,15 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
         address vrfCoordinator,
         uint64 subscriptionId,
         bytes32 gasLane,
-        uint32 callbackGasLimit
+        uint32 callbackGasLimit,
+        string[3] memory heliosUris
     ) VRFConsumerBaseV2(vrfCoordinator) ERC721("Random Hios Token", "RHIOS") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinator);
         i_subscriptionId = subscriptionId;
         i_gasLane = gasLane;
         i_callbackGasLimit = callbackGasLimit;
         s_tokenCounter = 0;
+        i_heliosUris = heliosUris;
     }
 
     function requestRandomNFT() public returns (uint256 requestId) {
@@ -77,6 +80,6 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
         uint256 raretyChance = randomWords[0] % MAX_RARETY_CHANCE;
         Rarety raretyMinted = getRaretyFromRandomWord(raretyChance);
         _mint(hiosOwner, tokenId);
-        // _setTokenURI(tokenId,)
+        _setTokenURI(tokenId, i_heliosUris[uint256(raretyMinted)]);
     }
 }
