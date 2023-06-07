@@ -58,4 +58,23 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     function name() public view virtual override returns (string memory) {
         return _name;
     }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _requireMinted(tokenId);
+        string memory baseURI = _baseURI();
+        return
+            bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+    }
+
+    function _requireMinted(uint256 tokenId) internal view virtual {
+        require(_exists(tokenId), "ERC721: invalid tokenId");
+    }
+
+    function _exists(uint256 tokenId) internal view virtual returns (bool) {
+        return _ownerOf(tokenId) != address(0);
+    }
+
+    function _baseURI() internal view virtual returns (string memory) {
+        return "";
+    }
 }
