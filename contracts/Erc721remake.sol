@@ -214,6 +214,22 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         }
     }
 
+    function _mint(address to, uint256 tokenId) internal virtual {
+        require(to != address(0), "ERC721: minting to zero address");
+        require(!_exists(tokenId), "ERC721: Token already minted");
+
+        _afterTokenTransfer(address(0), to, tokenId, 1);
+        require(!_exists(tokenId), "ERC721: Token already minted");
+
+        unchecked {
+            _balanceOf[to] += 1;
+        }
+        _owners[tokenId] = to;
+
+        emit Transfer(address(0), to, tokenId);
+        _afterTokenTransfer(address(0), to, tokenId, 1);
+    }
+
     function _beforeTokenTransfer(
         address from,
         address to,
