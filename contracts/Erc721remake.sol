@@ -140,15 +140,6 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     }
 
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        // token required to belong from
-        //require to different than zero address
-        // run whatever before transfer
-        //require token owner to be the from
-        // once transfered clear the approval for this token
-        // update balance of from and to under the unchecked
-        //transfer ownership
-        //emit transfer event
-        // nrun whatever with _after transfer token
         require(Erc721Remake.ownerOf(tokenId) == from, "ERC721: transfer from an invalid owner");
         require(to != address(0), "ERC721: transfer to the zero address is invalid");
 
@@ -168,6 +159,51 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         emit Transfer(from, to, tokenId);
 
         _afterTokenTransfer(from, to, tokenId, 1);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {}
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public virtual override {
+        //require is and approved or an owner
+        //call _safeTransfer
+    }
+
+    function _safeTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) internal virtual {
+        //call transfer method
+        //require checkOnERC721Received
+    }
+
+    function _checkOnERC721Received(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) private returns (bool) {
+        //if not contract return true
+        if (!to.isContract()) return true;
+
+        try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, data) returns (
+            bytes4 retval
+        ) {
+            return retval == IERC721Receiver.onERC721Received.selector;
+        } catch (bytes memory reason) {
+            if (reason.length == 0) revert("ERC721: transfer to non ERC721Receiver implementer");
+            else {
+                assembly {
+                    revert(add(32, reason), mload(reason))
+                }
+            }
+        }
     }
 
     function _beforeTokenTransfer(
