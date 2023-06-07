@@ -161,7 +161,9 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         _afterTokenTransfer(from, to, tokenId, 1);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {}
+    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
+        safeTransferFrom(from, to, tokenId, "");
+    }
 
     function safeTransferFrom(
         address from,
@@ -169,8 +171,11 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId,
         bytes memory data
     ) public virtual override {
-        //require is and approved or an owner
-        //call _safeTransfer
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: trasnferer is not the owner or an spender"
+        );
+        _safeTransfer(from, to, tokenId, data);
     }
 
     function _safeTransfer(
@@ -179,8 +184,11 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId,
         bytes memory data
     ) internal virtual {
-        //call transfer method
-        //require checkOnERC721Received
+        _transfer(from, to, tokenId);
+        require(
+            _checkOnERC721Received(from, to, tokenId, data),
+            "ERC721: transfer to non ERC721Receiver implementer"
+        );
     }
 
     function _checkOnERC721Received(
