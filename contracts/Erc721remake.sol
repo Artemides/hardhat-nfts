@@ -107,4 +107,9 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         _tokenApprovals[tokenId] = to;
         emit Approval(Erc721Remake.ownerOf(tokenId), to, tokenId);
     }
+
+    function getApproved(uint256 tokenId) public view virtual override returns (address) {
+        _requireMinted(tokenId);
+        return _tokenApprovals[tokenId];
+    }
 }
