@@ -120,4 +120,67 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         _operatorApprovals[owner][operator] = approval;
         emit ApprovalForAll(owner, operator, approval);
     }
+
+    function transferFrom(address from, address to, uint256 tokenId) public virtual override {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: Caller is not the owner or approved"
+        );
+        _transfer(from, to, tokenId);
+    }
+
+    function _isApprovedOrOwner(
+        address spender,
+        uint256 tokenId
+    ) internal view virtual returns (bool) {
+        address owner = Erc721Remake.ownerOf(tokenId);
+        return (owner == spender ||
+            isApprovedForAll(owner, spender) ||
+            getApproved(tokenId) == owner);
+    }
+
+    function _transfer(address from, address to, uint256 tokenId) internal virtual {
+        // token required to belong from
+        //require to different than zero address
+        // run whatever before transfer
+        //require token owner to be the from
+        // once transfered clear the approval for this token
+        // update balance of from and to under the unchecked
+        //transfer ownership
+        //emit transfer event
+        // nrun whatever with _after transfer token
+        require(Erc721Remake.ownerOf(tokenId) == from, "ERC721: transfer from an invalid owner");
+        require(to != address(0), "ERC721: transfer to the zero address is invalid");
+
+        _beforeTokenTransfer(from, to, tokenId, 1);
+
+        require(Erc721Remake.ownerOf(tokenId) == from, "ERC721: transfer from an invalid owner");
+
+        delete _tokenApprovals[tokenId];
+
+        unchecked {
+            _balanceOf[from] -= 1;
+            _balanceOf[to] += 1;
+        }
+
+        _owners[tokenId] = to;
+
+        emit Transfer(from, to, tokenId);
+
+        _afterTokenTransfer(from, to, tokenId, 1);
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual {}
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual {}
 }
