@@ -27,8 +27,6 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     mapping(uint256 => address) _tokenApprovals;
     mapping(address => mapping(address => bool)) _operatorApprovals;
 
-    event Approval(address indexed from, address indexed to, uint256 tokenId);
-
     constructor(string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
@@ -111,5 +109,15 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     function getApproved(uint256 tokenId) public view virtual override returns (address) {
         _requireMinted(tokenId);
         return _tokenApprovals[tokenId];
+    }
+
+    function setApprovalForAll(address operator, bool approved) public virtual override {
+        _setApprovalForAll(_msgSender(), operator, approved);
+    }
+
+    function _setApprovalForAll(address owner, address operator, bool approval) internal virtual {
+        require(owner != operator, "ERC721: approve to caller");
+        _operatorApprovals[owner][operator] = approval;
+        emit ApprovalForAll(owner, operator, approval);
     }
 }
