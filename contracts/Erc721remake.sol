@@ -214,6 +214,18 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         }
     }
 
+    function _safeMint(address to, uint256 tokenId) public virtual {
+        _safeMint(to, tokenId, "");
+    }
+
+    function _safeMint(address to, uint256 tokenId, bytes memory data) public virtual {
+        _mint(to, tokenId);
+        require(
+            _checkOnERC721Received(address(0), to, tokenId, data),
+            "ERC721: transfer to non ERC721Receiver implementer"
+        );
+    }
+
     function _mint(address to, uint256 tokenId) internal virtual {
         require(to != address(0), "ERC721: minting to zero address");
         require(!_exists(tokenId), "ERC721: Token already minted");
@@ -230,6 +242,24 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         _afterTokenTransfer(address(0), to, tokenId, 1);
     }
 
+    function _burn(uint256 tokenId) internal virtual {
+        address owner = Erc721Remake.ownerOf(tokenId);
+
+        _beforeTokenTransfer(owner, address(0), tokenId, 1);
+
+        owner = Erc721Remake.ownerOf(tokenId);
+
+        unchecked {
+            _balanceOf[owner] -= 1;
+        }
+
+        delete _owners[tokenId];
+
+        emit Transfer(owner, address(0), tokenId);
+
+        _afterTokenTransfer(owner, address(0), tokenId, 1);
+    }
+
     function _beforeTokenTransfer(
         address from,
         address to,
@@ -243,4 +273,8 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual {}
+
+    function __unsafe_increaseBalance(address account, uint256 amount) internal {
+        _balanceOf[account] += amount;
+    }
 }
