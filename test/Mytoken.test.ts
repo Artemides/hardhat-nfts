@@ -15,6 +15,13 @@ import { assert, expect } from "chai";
           });
 
           describe("Constructor", () => {
+              it("Initializes the correctly the NFT name and Symbol", async () => {
+                  const nftName = await hiosNft.name();
+                  const nftSymbol = await hiosNft.symbol();
+
+                  assert.equal(nftName, "Helios");
+                  assert.equal(nftSymbol, "HIOS");
+              });
               it("Starts the nft's Id at 0", async () => {
                   const tokenCounter = await hiosNft.getTokenCounter();
                   assert.equal(tokenCounter.toNumber(), 0);
