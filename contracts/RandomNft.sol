@@ -5,6 +5,9 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
+error RandomNft__RaretyOutOfBounds();
+error RandomNft__InvalidMintingFee();
+
 contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
     enum Rarety {
         HELIOS_CLASSIC,
@@ -15,6 +18,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
 
     uint256 private s_tokenCounter;
     string[] internal i_heliosUris;
+    uint256 internal i_mintFee;
 
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
 
@@ -28,14 +32,18 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
 
     uint8 private constant MAX_RARETY_CHANCE = 100;
 
-    error RandomNft__RaretyOutOfBounds();
+    modifier mintingFeeRequired() {
+        if (msg.value != i_mintFee) revert RandomNft__InvalidMintingFee();
+        _;
+    }
 
     constructor(
         address vrfCoordinator,
         uint64 subscriptionId,
         bytes32 gasLane,
         uint32 callbackGasLimit,
-        string[3] memory heliosUris
+        string[3] memory heliosUris,
+        uint256 mintFee
     ) VRFConsumerBaseV2(vrfCoordinator) ERC721("Random Hios Token", "RHIOS") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinator);
         i_subscriptionId = subscriptionId;
@@ -43,9 +51,10 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
         i_callbackGasLimit = callbackGasLimit;
         s_tokenCounter = 0;
         i_heliosUris = heliosUris;
+        i_mintFee = mintFee;
     }
 
-    function requestRandomNFT() public returns (uint256 requestId) {
+    function requestRandomNFT() public payable mintingFeeRequired returns (uint256 requestId) {
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
