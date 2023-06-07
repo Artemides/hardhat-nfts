@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.8;
 
-// users need to pay to mint an NFT
-// when minting a NFT request a chainlink VRF for a random number
-// get a super rare pub, sort of rare shina inu, St. bernard common
-
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract RandomNft is VRFConsumerBaseV2, ERC721 {
+contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
     enum Rarety {
         HELIOS_CLASSIC,
         HELIOS_RARE,
@@ -57,10 +53,6 @@ contract RandomNft is VRFConsumerBaseV2, ERC721 {
         s_requestIdToOwner[requestId] = msg.sender;
     }
 
-    //function changeArray []
-    //define enum with HELIOS_CLASSIC, HELIOS_RARE, HELIOS_MITHIC, HELIOS_ULTRA
-    //getbreedfrommoddedrng
-
     function getRaretyFromRandomWord(uint256 raretyChance) internal pure returns (Rarety) {
         uint256 leftLimit = 0;
         uint256[4] memory raretyChances = getRarityChances();
@@ -80,10 +72,11 @@ contract RandomNft is VRFConsumerBaseV2, ERC721 {
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         address hiosOwner = s_requestIdToOwner[requestId];
-        uint256 tokenCounter = s_tokenCounter;
+        uint256 tokenId = s_tokenCounter;
 
         uint256 raretyChance = randomWords[0] % MAX_RARETY_CHANCE;
         Rarety raretyMinted = getRaretyFromRandomWord(raretyChance);
-        _mint(hiosOwner, tokenCounter);
+        _mint(hiosOwner, tokenId);
+        // _setTokenURI(tokenId,)
     }
 }
