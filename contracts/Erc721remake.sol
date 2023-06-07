@@ -12,13 +12,6 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
 
-    //define name and symbol states
-    //define  a mapping from tokenid to owner _owners
-    //define mapping with the balances of an address _balanceOf
-    //define mapping for token approvals tokenid to address _tokenApprovals
-    //definde mapping for operator approvals owner -> operator -> bool _operator Approvals
-
-    // initialize the constructor setting up the name and the symbol
     string private _name;
     string private _symbol;
 
@@ -276,5 +269,9 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
 
     function __unsafe_increaseBalance(address account, uint256 amount) internal {
         _balanceOf[account] += amount;
+    }
+
+    function symbol() external view override returns (string memory) {
+        return _symbol;
     }
 }
