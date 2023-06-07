@@ -27,6 +27,8 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
     mapping(uint256 => address) _tokenApprovals;
     mapping(address => mapping(address => bool)) _operatorApprovals;
 
+    event Approval(address indexed from, address indexed to, uint256 tokenId);
+
     constructor(string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
@@ -76,5 +78,33 @@ contract Erc721Remake is Context, ERC165, IERC721, IERC721Metadata {
 
     function _baseURI() internal view virtual returns (string memory) {
         return "";
+    }
+
+    function approve(address to, uint256 tokenId) public virtual override {
+        // get owner
+        // throw is onwer == to
+        // require the owner to be the sender or sender as operator is approved to handle this token
+        //
+        // approve operator
+
+        address owner = Erc721Remake.ownerOf(tokenId);
+        require(owner != address(0), "ERC721: approve to zero address isn't valid");
+        require(
+            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
+            "ERC721: approve caller is not token owner or approved for all"
+        );
+        _approve(to, tokenId);
+    }
+
+    function isApprovedForAll(
+        address owner,
+        address operator
+    ) public view virtual override returns (bool) {
+        return _operatorApprovals[owner][operator];
+    }
+
+    function _approve(address to, uint256 tokenId) internal virtual {
+        _tokenApprovals[tokenId] = to;
+        emit Approval(Erc721Remake.ownerOf(tokenId), to, tokenId);
     }
 }
