@@ -6,10 +6,6 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-error RandomNft__RaretyOutOfBounds();
-error RandomNft__InvalidMintingFee();
-error RadndomNft__WithdrawFailed();
-
 contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     enum Rarety {
         HELIOS_CLASSIC,
@@ -33,6 +29,13 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     mapping(uint256 => address) s_requestIdToOwner;
 
     uint8 private constant MAX_RARETY_CHANCE = 100;
+
+    event NftRequested(uint256 requestId, address requester);
+    event NftMinted(Rarety hiosRarety, address minter);
+
+    error RandomNft__RaretyOutOfBounds();
+    error RandomNft__InvalidMintingFee();
+    error RadndomNft__WithdrawFailed();
 
     modifier mintingFeeRequired() {
         if (msg.value != i_mintFee) revert RandomNft__InvalidMintingFee();
@@ -71,6 +74,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
             NUM_WORDS
         );
         s_requestIdToOwner[requestId] = msg.sender;
+        emit NftRequested(requestId, _msgSender());
     }
 
     function getRaretyFromRandomWord(uint256 raretyChance) internal pure returns (Rarety) {
@@ -98,6 +102,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         Rarety raretyMinted = getRaretyFromRandomWord(raretyChance);
         _mint(hiosOwner, tokenId);
         _setTokenURI(tokenId, i_heliosUris[uint256(raretyMinted)]);
+        emit NftMinted(raretyMinted, _msgSender());
     }
 
     //get mint fee
