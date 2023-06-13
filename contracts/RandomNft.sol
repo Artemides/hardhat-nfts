@@ -99,4 +99,20 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         _mint(hiosOwner, tokenId);
         _setTokenURI(tokenId, i_heliosUris[uint256(raretyMinted)]);
     }
+
+    //get mint fee
+    //get token uri
+    //get token counter
+
+    function getMintingFee() public view returns (uint256) {
+        return i_mintFee;
+    }
+
+    function getTokenURI(uint256 tokenIdx) public view returns (string memory) {
+        return i_heliosUris[tokenIdx];
+    }
+
+    function getTokenCounter() public view returns (uint256) {
+        return s_tokenCounter;
+    }
 }
