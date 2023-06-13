@@ -4,11 +4,13 @@ pragma solidity ^0.8.8;
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error RandomNft__RaretyOutOfBounds();
 error RandomNft__InvalidMintingFee();
+error RadndomNft__WithdrawFailed();
 
-contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
+contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     enum Rarety {
         HELIOS_CLASSIC,
         HELIOS_RARE,
@@ -52,6 +54,12 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage {
         s_tokenCounter = 0;
         i_heliosUris = heliosUris;
         i_mintFee = mintFee;
+    }
+
+    function withdraw() public onlyOwner {
+        uint256 amount = address(this).balance;
+        (bool success, ) = payable(address(this)).call{value: amount}("");
+        if (!success) revert RadndomNft__WithdrawFailed();
     }
 
     function requestRandomNFT() public payable mintingFeeRequired returns (uint256 requestId) {
