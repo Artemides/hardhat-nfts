@@ -47,7 +47,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint64 subscriptionId,
         bytes32 gasLane,
         uint32 callbackGasLimit,
-        string[3] memory heliosUris,
+        string[4] memory heliosUris,
         uint256 mintFee
     ) VRFConsumerBaseV2(vrfCoordinator) ERC721("Random Hios Token", "RHIOS") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinator);
@@ -100,6 +100,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
         uint256 raretyChance = randomWords[0] % MAX_RARETY_CHANCE;
         Rarety raretyMinted = getRaretyFromRandomWord(raretyChance);
+        s_tokenCounter += 1;
         _mint(hiosOwner, tokenId);
         _setTokenURI(tokenId, i_heliosUris[uint256(raretyMinted)]);
         emit NftMinted(raretyMinted, _msgSender());

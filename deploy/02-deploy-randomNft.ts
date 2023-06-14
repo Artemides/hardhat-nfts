@@ -11,6 +11,8 @@ const tokenMetadataTemplate = {
     attributes: [{ trait_types: "rarity", value: 100 }],
 };
 
+const FUND_LINK_AMOUNT = ethers.utils.parseUnits("10");
+
 const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
     const {
         deployments: { deploy, log },
@@ -37,6 +39,8 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
         const tx = await vrfCoordinatorV2Mock.createSubscription();
         const { events } = await tx.wait(1);
         subscriptionId = events ? events[0].args?.subId : "";
+
+        await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_LINK_AMOUNT);
     } else {
         vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2!;
         subscriptionId = networkConfig[chainId].subscriptionId!;
