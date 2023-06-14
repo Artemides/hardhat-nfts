@@ -10,7 +10,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     enum Rarety {
         HELIOS_CLASSIC,
         HELIOS_RARE,
-        HELIOS_MITHIC,
+        HELIOS_MYTHIC,
         HELIOS_ULTRA
     }
 
