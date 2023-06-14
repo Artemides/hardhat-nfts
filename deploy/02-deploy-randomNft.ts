@@ -35,14 +35,4 @@ export const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
         waitConfirmations: 1,
     });
-
-    //get agregator
-    //deploy
-    //args []
-    //  vrfCoordinator,
-    //  subscriptionId,
-    //  gasLane,
-    //  callbackGasLimit,
-    //  heliosUris,
-    //  mintFee
 };
