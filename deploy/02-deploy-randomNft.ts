@@ -60,6 +60,7 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
         mintFee,
     ];
 
+    console.log({ mintFee });
     await deploy("RandomNft", {
         from: deployer,
         args,

@@ -23,7 +23,7 @@ import { assert } from "chai";
 
 !developmentChains.includes(network.name)
     ? describe.skip
-    : describe("Rnadom IPFS NFT", () => {
+    : describe("Random IPFS NFT", () => {
           let randomNft: RandomNft;
           let vrfCoordinatorV2Mock: VRFCoordinatorV2Mock;
           let deployer: string;
@@ -33,14 +33,13 @@ import { assert } from "chai";
               await deployments.fixture(["mocks", "nftipfs"]);
               randomNft = await ethers.getContract("RandomNft");
               vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock");
-              chainId = ethers.provider.network.chainId;
+              chainId = network.config.chainId ?? 0;
           });
           describe("Constructor", () => {
               it("Sets starting values correctly", async () => {
                   const _mintinFee = networkConfig[chainId].mintFee;
                   const mintinFee = await randomNft.getMintingFee();
-                  const mintingFeeEther = ethers.utils.parseEther(mintinFee.toString());
-                  assert.equal(_mintinFee, mintingFeeEther);
+                  assert.equal(_mintinFee.toString(), mintinFee.toString());
               });
           });
       });
