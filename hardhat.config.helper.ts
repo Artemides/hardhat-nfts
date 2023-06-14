@@ -1,3 +1,6 @@
+import { BigNumber } from "ethers";
+import { ethers } from "hardhat";
+
 export type NetworkConfig = {
     [key: string]: {
         name: string;
@@ -5,6 +8,7 @@ export type NetworkConfig = {
         gasLane: string;
         subscriptionId?: string;
         callbackGasLimit: string;
+        mintFee: BigNumber;
     };
 };
 
@@ -15,11 +19,13 @@ export const networkConfig: NetworkConfig = {
         subscriptionId: "2400",
         gasLane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
         callbackGasLimit: "500000",
+        mintFee: ethers.utils.parseEther("0.01"),
     },
     31337: {
         name: "local",
         gasLane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
         callbackGasLimit: "500000",
+        mintFee: ethers.utils.parseEther("0.01"),
     },
 };
 
