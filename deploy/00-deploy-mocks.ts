@@ -4,7 +4,7 @@ import { ethers, network } from "hardhat";
 const BASE_FEE = ethers.utils.parseEther("0.25");
 const GAS_PRICE_LINK = 1e9;
 
-export const vrfCoodinatorV2 = async (hre: HardhatRuntimeEnvironment) => {
+const vrfCoodinatorV2 = async (hre: HardhatRuntimeEnvironment) => {
     const {
         deployments: { deploy, log },
         getNamedAccounts,
@@ -22,5 +22,7 @@ export const vrfCoodinatorV2 = async (hre: HardhatRuntimeEnvironment) => {
         log("vrf coordinator deployed");
     }
 };
+
+export default vrfCoodinatorV2;
 
 vrfCoodinatorV2.tags = ["all", "mocks"];
