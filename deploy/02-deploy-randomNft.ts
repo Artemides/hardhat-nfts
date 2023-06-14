@@ -11,7 +11,7 @@ const tokenMetadataTemplate = {
     attributes: [{ trait_types: "rarity", value: 100 }],
 };
 
-export const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
+const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
     const {
         deployments: { deploy, log },
         getNamedAccounts,
@@ -84,5 +84,5 @@ async function handleNftUris() {
     console.log({ nftUris });
     return nftUris;
 }
-
+export default randomNFT;
 randomNFT.tags = ["all", "nftipfs", "main"];
