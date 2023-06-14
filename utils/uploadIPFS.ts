@@ -11,10 +11,9 @@ export async function uploadFilesToIPFS(dirPath: string) {
     const responses: PinataPinResponse[] = [];
     const relativePath = resolve(dirPath);
     const files = fs.readdirSync(relativePath);
-    console.log({ files });
     console.log("Deploying files to pinata...");
     for (const file in files) {
-        console.log(`Working on ${file}`);
+        console.log(`Working on ${file}...`);
         try {
             const readStream = fs.createReadStream(file);
             const response = await pinata.pinFileToIPFS(readStream);
@@ -23,5 +22,18 @@ export async function uploadFilesToIPFS(dirPath: string) {
             console.error(error);
         }
     }
+    console.log("Files deployed...");
     return { responses, files };
+}
+
+//uplad jsonmetadata to ipfs
+
+export async function uploadJsonToIpfs(metadata: any): Promise<PinataPinResponse | null> {
+    try {
+        const response = await pinata.pinJSONToIPFS(metadata);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
