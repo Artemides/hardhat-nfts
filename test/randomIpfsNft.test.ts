@@ -87,9 +87,13 @@ import { assert, expect } from "chai";
           describe("fulfillRandomWords", () => {
               it("Mints a NFT after requesting a random number", async () => {
                   await new Promise(async (resolve, reject) => {
-                      randomNft.once("NftMinted", (rarityMinted, sender) => {
+                      randomNft.once("NftMinted", async (_, tokenId) => {
                           try {
-                              console.log({ rarityMinted, sender });
+                              const owner = await randomNft.getTokenOwner(tokenId);
+                              const tokenCounter = await randomNft.getTokenCounter();
+                              assert.equal(owner, deployer);
+                              assert.equal(tokenCounter.toString(), "1");
+
                               resolve("");
                           } catch (error) {
                               console.error(error);
@@ -111,7 +115,6 @@ import { assert, expect } from "chai";
                           if (!evenDesired || !evenDesired.args) return reject(false);
 
                           const { requestId, requester } = evenDesired.args;
-                          console.log({ requestId, requester });
 
                           await vrfCoordinatorV2Mock.fulfillRandomWords(
                               requestId,

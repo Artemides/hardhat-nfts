@@ -13,7 +13,7 @@ export async function uploadFilesToIPFS(dirPath: string) {
     let files = fs.readdirSync(relativePath);
     files = files.filter((file) => file.includes("jpg"));
     console.log("Deploying files to pinata...");
-    console.log({ files });
+    // console.log({ files });
     for (const file of files) {
         console.log(`Working on ${file}...`);
         try {
