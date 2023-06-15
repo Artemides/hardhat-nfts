@@ -83,4 +83,45 @@ import { assert, expect } from "chai";
                   );
               });
           });
+
+          describe("fulfillRandomWords", () => {
+              it("Mints a NFT after requesting a random number", async () => {
+                  await new Promise(async (resolve, reject) => {
+                      randomNft.once("NftMinted", (rarityMinted, sender) => {
+                          try {
+                              console.log({ rarityMinted, sender });
+                              resolve("");
+                          } catch (error) {
+                              console.error(error);
+                              reject(error);
+                          }
+                      });
+                      try {
+                          const mintFee = await randomNft.getMintingFee();
+                          const tx = await randomNft.requestRandomNFT({
+                              value: mintFee.toString(),
+                          });
+                          const txReceipt = await tx.wait(1);
+                          const { events } = txReceipt;
+
+                          if (!events) return reject(false);
+                          const evenDesired = events.find(
+                              (event) => event.event === "NftRequested"
+                          );
+                          if (!evenDesired || !evenDesired.args) return reject(false);
+
+                          const { requestId, requester } = evenDesired.args;
+                          console.log({ requestId, requester });
+
+                          await vrfCoordinatorV2Mock.fulfillRandomWords(
+                              requestId,
+                              randomNft.address
+                          );
+                      } catch (error) {
+                          console.error(error);
+                          resolve(error);
+                      }
+                  });
+              });
+          });
       });

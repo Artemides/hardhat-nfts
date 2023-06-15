@@ -70,6 +70,7 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
         waitConfirmations: 1,
     });
+
     if (vrfCoordinatorV2Mock) {
         vrfCoordinatorV2Mock.addConsumer(subscriptionId, randomNFT.address);
     }
