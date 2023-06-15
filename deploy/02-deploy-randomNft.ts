@@ -12,7 +12,6 @@ const tokenMetadataTemplate = {
 };
 
 const FUND_LINK_AMOUNT = ethers.utils.parseUnits("10");
-
 let nftUris: string[] = [
     "QmdG1pW9pQNZQo9HxupQkQAo6E9FphJLxx45TQDsHAaZPn",
     "QmTKDLnaJAKQCvR5F64Grav2WPkbkvvVvV5mwu7SgdEz96",
@@ -28,6 +27,7 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
     const chainId = network.config.chainId ?? "";
     let vrfCoordinatorV2Address: string;
+    let vrfCoordinatorV2Mock: VRFCoordinatorV2Mock | undefined = undefined;
     let subscriptionId: string;
     const gasLane = networkConfig[chainId].gasLane;
     const callbackGasLimit = networkConfig[chainId].callbackGasLimit;
@@ -38,9 +38,10 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
     }
 
     if (developmentChains.includes(network.name)) {
-        const vrfCoordinatorV2Mock: VRFCoordinatorV2Mock = await ethers.getContract(
+        vrfCoordinatorV2Mock = (await ethers.getContract(
             "VRFCoordinatorV2Mock"
-        );
+        )) as VRFCoordinatorV2Mock;
+        if (!vrfCoordinatorV2Mock) return;
         vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address;
         const tx = await vrfCoordinatorV2Mock.createSubscription();
         const { events } = await tx.wait(1);
@@ -51,6 +52,7 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
         vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2!;
         subscriptionId = networkConfig[chainId].subscriptionId!;
     }
+
     const args = [
         vrfCoordinatorV2Address,
         subscriptionId,
@@ -61,12 +63,16 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
     ];
 
     console.log({ mintFee });
-    await deploy("RandomNft", {
+
+    const randomNFT = await deploy("RandomNft", {
         from: deployer,
         args,
         log: true,
         waitConfirmations: 1,
     });
+    if (vrfCoordinatorV2Mock) {
+        vrfCoordinatorV2Mock.addConsumer(subscriptionId, randomNFT.address);
+    }
 };
 
 //handle nft uris => uris

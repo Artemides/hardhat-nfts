@@ -19,7 +19,7 @@ getBreedFromModdedRng
 import { deployments, ethers, network } from "hardhat";
 import { developmentChains, networkConfig } from "../hardhat.config.helper";
 import { RandomNft, VRFCoordinatorV2Mock } from "../typechain-types";
-import { assert } from "chai";
+import { assert, expect } from "chai";
 
 !developmentChains.includes(network.name)
     ? describe.skip
@@ -40,6 +40,47 @@ import { assert } from "chai";
                   const _mintinFee = networkConfig[chainId].mintFee;
                   const mintinFee = await randomNft.getMintingFee();
                   assert.equal(_mintinFee.toString(), mintinFee.toString());
+              });
+              it("Starts the token counter at 0", async () => {
+                  const tokenCounter = await randomNft.getTokenCounter();
+                  assert.equal(tokenCounter.toString(), "0");
+              });
+              it("Sets correctly the VRFCoordinatorV2", async () => {
+                  const tokenCounter = await randomNft.getTokenCounter();
+                  assert.equal(tokenCounter.toString(), "0");
+              });
+          });
+
+          describe("Request Random NFT", () => {
+              beforeEach(async () => {});
+
+              it("Reverts if the payment is not sent", async () => {
+                  await expect(randomNft.requestRandomNFT()).to.be.revertedWithCustomError(
+                      randomNft,
+                      "RandomNft__InvalidMintingFee"
+                  );
+              });
+
+              it("Reverts if payment is not equal than minting fee", async () => {
+                  const mintingFee = await randomNft.getMintingFee();
+                  await expect(
+                      randomNft.requestRandomNFT({
+                          value: mintingFee.sub(ethers.utils.parseEther("0.001")),
+                      })
+                  ).to.be.revertedWithCustomError(randomNft, "RandomNft__InvalidMintingFee");
+                  await expect(
+                      randomNft.requestRandomNFT({
+                          value: mintingFee.add(ethers.utils.parseEther("0.001")),
+                      })
+                  ).to.be.revertedWithCustomError(randomNft, "RandomNft__InvalidMintingFee");
+              });
+
+              it("Emits an event and kicks off a random nft", async () => {
+                  const mintingFee = await randomNft.getMintingFee();
+                  await expect(randomNft.requestRandomNFT({ value: mintingFee })).to.emit(
+                      randomNft,
+                      "NftRequested"
+                  );
               });
           });
       });
