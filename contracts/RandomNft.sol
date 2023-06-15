@@ -77,7 +77,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         emit NftRequested(requestId, _msgSender());
     }
 
-    function getRarityFromRandomWord(uint256 rarityChance) internal pure returns (Rarity) {
+    function getRarityFromRandomWord(uint256 rarityChance) public pure returns (Rarity) {
         uint256 leftLimit = 0;
         uint256[4] memory rarityChances = getRarityChances();
 

@@ -109,12 +109,13 @@ import { assert, expect } from "chai";
                           const { events } = txReceipt;
 
                           if (!events) return reject(false);
-                          const evenDesired = events.find(
+
+                          const eventDesired = events.find(
                               (event) => event.event === "NftRequested"
                           );
-                          if (!evenDesired || !evenDesired.args) return reject(false);
+                          if (!eventDesired || !eventDesired.args) return reject(false);
 
-                          const { requestId, requester } = evenDesired.args;
+                          const { requestId, requester } = eventDesired.args;
 
                           await vrfCoordinatorV2Mock.fulfillRandomWords(
                               requestId,
@@ -125,6 +126,24 @@ import { assert, expect } from "chai";
                           resolve(error);
                       }
                   });
+              });
+          });
+          describe("Get rarity from random word", () => {
+              it("Returns classic NFT if rarity chance is less than 60", async () => {
+                  const rarity = await randomNft.getRarityFromRandomWord(58);
+                  assert.equal(rarity, 0);
+              });
+              it("Returns Rare NFT if rarity chance is between than 60 and 80", async () => {
+                  const rarity = await randomNft.getRarityFromRandomWord(61);
+                  assert.equal(rarity, 1);
+              });
+              it("Returns Mythic NFT if rarity chance is less than 80 and 95", async () => {
+                  const rarity = await randomNft.getRarityFromRandomWord(90);
+                  assert.equal(rarity, 2);
+              });
+              it("Returns Ultra NFT if rarity chance is less than 95 and 100", async () => {
+                  const rarity = await randomNft.getRarityFromRandomWord(98);
+                  assert.equal(rarity, 3);
               });
           });
       });
