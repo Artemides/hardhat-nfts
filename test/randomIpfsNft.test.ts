@@ -137,13 +137,18 @@ import { assert, expect } from "chai";
                   const rarity = await randomNft.getRarityFromRandomWord(61);
                   assert.equal(rarity, 1);
               });
-              it("Returns Mythic NFT if rarity chance is less than 80 and 95", async () => {
+              it("Returns Mythic NFT if rarity chance is between than 80 and 95", async () => {
                   const rarity = await randomNft.getRarityFromRandomWord(90);
                   assert.equal(rarity, 2);
               });
-              it("Returns Ultra NFT if rarity chance is less than 95 and 100", async () => {
+              it("Returns Ultra NFT if rarity chance is between than 95 and 100", async () => {
                   const rarity = await randomNft.getRarityFromRandomWord(98);
                   assert.equal(rarity, 3);
+              });
+              it("Reverts if chance is greater than 100", async () => {
+                  await expect(
+                      randomNft.getRarityFromRandomWord(101)
+                  ).to.be.revertedWithCustomError(randomNft, "RandomNft__RarityOutOfBounds");
               });
           });
       });
