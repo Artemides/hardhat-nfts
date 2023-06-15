@@ -151,4 +151,18 @@ import { assert, expect } from "chai";
                   ).to.be.revertedWithCustomError(randomNft, "RandomNft__RarityOutOfBounds");
               });
           });
+          describe("Withdraw", () => {
+              it("Reverts if the withdraw caller is not the owner", async () => {
+                  const signers = await ethers.getSigners();
+                  const random = Math.floor(Math.random() * signers.length) + 1;
+                  const newSigner = signers[random];
+                  const newSignerContract: RandomNft = await ethers.getContract(
+                      "RandomNft",
+                      newSigner
+                  );
+                  await expect(newSignerContract.withdraw()).to.be.revertedWith(
+                      "Ownable: caller is not the owner"
+                  );
+              });
+          });
       });
