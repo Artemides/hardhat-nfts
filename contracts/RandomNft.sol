@@ -31,7 +31,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     uint8 private constant MAX_RARITY_CHANCE = 100;
 
     event NftRequested(uint256 requestId, address requester);
-    event NftMinted(Rarity hiosRarity, address minter);
+    event NftMinted(Rarity hiosRarity, uint256 tokenId, address minter);
 
     error RandomNft__RarityOutOfBounds();
     error RandomNft__InvalidMintingFee();
@@ -77,7 +77,7 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         emit NftRequested(requestId, _msgSender());
     }
 
-    function getRarityFromRandomWord(uint256 rarityChance) internal pure returns (Rarity) {
+    function getRarityFromRandomWord(uint256 rarityChance) public pure returns (Rarity) {
         uint256 leftLimit = 0;
         uint256[4] memory rarityChances = getRarityChances();
 
@@ -100,10 +100,11 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
         uint256 rarityChance = randomWords[0] % MAX_RARITY_CHANCE;
         Rarity rarityMinted = getRarityFromRandomWord(rarityChance);
-        s_tokenCounter += 1;
+
         _mint(hiosOwner, tokenId);
         _setTokenURI(tokenId, i_heliosUris[uint256(rarityMinted)]);
-        emit NftMinted(rarityMinted, _msgSender());
+        emit NftMinted(rarityMinted, s_tokenCounter, _msgSender());
+        s_tokenCounter += 1;
     }
 
     //get mint fee
@@ -120,5 +121,9 @@ contract RandomNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     function getTokenCounter() public view returns (uint256) {
         return s_tokenCounter;
+    }
+
+    function getTokenOwner(uint256 tokenId) public view returns (address) {
+        return ownerOf(tokenId);
     }
 }
