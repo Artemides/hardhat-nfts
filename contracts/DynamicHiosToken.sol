@@ -10,9 +10,10 @@ contract Name is ERC721 {
     //data:image/svg+xml;base65,....
     uint256 s_tokenCounter;
     string constant SVG_PREFIX = "data:image/svg+xml;base64,";
+    string constant JSON_PREFIX = "data:application/json;base64,";
 
-    // string private immutable i_sadToken;
-    // string private immutable i_happyToken;
+    string private i_sadTokenURI;
+    string private i_happyTokeniURI;
 
     constructor(string memory sadToken, string memory happyToken) ERC721("SVG Hios Token", "HSVG") {
         s_tokenCounter = 0;
@@ -27,5 +28,32 @@ contract Name is ERC721 {
     function mint() public {
         _safeMint(_msgSender(), s_tokenCounter);
         s_tokenCounter = s_tokenCounter + 1;
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "Token does not exist");
+        string memory imageURI = "123456789";
+        return
+            string(
+                abi.encodePacked(
+                    JSON_PREFIX,
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                "{"
+                                '"name:":"',
+                                name(),
+                                '",',
+                                '"description":"And NFT that changes besed on the Eth price",',
+                                '"attributes":[{"trait_type":"coolness","value":100}],',
+                                '"image":"',
+                                imageURI,
+                                '"'
+                                "}"
+                            )
+                        )
+                    )
+                )
+            );
     }
 }
