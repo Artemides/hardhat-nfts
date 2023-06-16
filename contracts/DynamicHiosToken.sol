@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "base64-sol/base64.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract Name is ERC721 {
     // function to mint
@@ -9,14 +10,23 @@ contract Name is ERC721 {
     // logic to determine when to show x or y
     //data:image/svg+xml;base65,....
     uint256 s_tokenCounter;
-    string constant SVG_PREFIX = "data:image/svg+xml;base64,";
-    string constant JSON_PREFIX = "data:application/json;base64,";
-
     string private i_sadTokenURI;
     string private i_happyTokeniURI;
+    string constant SVG_PREFIX = "data:image/svg+xml;base64,";
+    string constant JSON_PREFIX = "data:application/json;base64,";
+    mapping(uint256 => int256) s_tokenToPrice;
 
-    constructor(string memory sadToken, string memory happyToken) ERC721("SVG Hios Token", "HSVG") {
+    AggregatorV3Interface internal immutable i_priceFeed;
+
+    constructor(
+        address princeFeedAddress,
+        string memory sadToken,
+        string memory happyToken
+    ) ERC721("SVG Hios Token", "HSVG") {
         s_tokenCounter = 0;
+        i_sadTokenURI = svgToUri(sadToken);
+        i_happyTokeniURI = svgToUri(happyToken);
+        i_priceFeed = AggregatorV3Interface(princeFeedAddress);
     }
 
     function svgToUri(string memory svgToken) internal pure returns (string memory) {
@@ -25,14 +35,24 @@ contract Name is ERC721 {
         return string(abi.encodePacked(SVG_PREFIX, svgEncoded));
     }
 
-    function mint() public {
+    function mint(int256 priceLimit) public {
         _safeMint(_msgSender(), s_tokenCounter);
+        s_tokenToPrice[s_tokenCounter] = priceLimit;
         s_tokenCounter = s_tokenCounter + 1;
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token does not exist");
-        string memory imageURI = "123456789";
+        string memory imageURI = i_sadTokenURI;
+        int256 priceLimit = s_tokenToPrice[tokenId];
+        (, int256 priceFeed, , , ) = i_priceFeed.latestRoundData();
+        if (priceLimit > priceFeed) {
+            imageURI = i_happyTokeniURI;
+        }
+        // determine which nft is gonna be returned, based on the minting price feed range
+        // use aggregatorv3 for that
+        //
+
         return
             string(
                 abi.encodePacked(
