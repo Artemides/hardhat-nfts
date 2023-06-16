@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract Name is ERC721 {
+contract SvgHiosToken is ERC721 {
     // function to mint
     // store our nfts
     // logic to determine when to show x or y
