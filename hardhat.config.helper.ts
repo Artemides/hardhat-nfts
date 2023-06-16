@@ -9,6 +9,7 @@ export type NetworkConfig = {
         subscriptionId?: string;
         callbackGasLimit: string;
         mintFee: BigNumber;
+        priceFeedAddress?: string;
     };
 };
 
@@ -20,6 +21,7 @@ export const networkConfig: NetworkConfig = {
         gasLane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
         callbackGasLimit: "500000",
         mintFee: ethers.utils.parseEther("0.01"),
+        priceFeedAddress: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
     },
     31337: {
         name: "local",
