@@ -31,3 +31,7 @@ const svgHiosToken = async (hre: HardhatRuntimeEnvironment) => {
         waitConfirmations: 1,
     });
 };
+
+export default svgHiosToken;
+
+svgHiosToken.tags = ["all", "mocks"];

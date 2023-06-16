@@ -5,7 +5,7 @@ const BASE_FEE = ethers.utils.parseEther("0.25");
 const GAS_PRICE_LINK = 1e9;
 
 const V3_AGGREGATOR_DECIMAL = 18;
-const V3_AGGREGATOR_INITAL_ANSWER = 1719.8 * 10 ** V3_AGGREGATOR_DECIMAL;
+const V3_AGGREGATOR_INITAL_ANSWER = ethers.utils.parseUnits("1724", "ether");
 
 const vrfCoodinatorV2 = async (hre: HardhatRuntimeEnvironment) => {
     const {
@@ -23,7 +23,6 @@ const vrfCoodinatorV2 = async (hre: HardhatRuntimeEnvironment) => {
             log: true,
         });
         log("vrf coordinator deployed");
-
         log("Deploying MockV3Aggretator...");
         await deploy("MockV3Aggregator", {
             from: deployer,
