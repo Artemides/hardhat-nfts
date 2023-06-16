@@ -18,6 +18,8 @@ contract Name is ERC721 {
 
     AggregatorV3Interface internal immutable i_priceFeed;
 
+    event NftMinted(uint256 tokenId, int256 priceThreshold);
+
     constructor(
         address princeFeedAddress,
         string memory sadToken,
@@ -36,9 +38,10 @@ contract Name is ERC721 {
     }
 
     function mint(int256 priceLimit) public {
-        _safeMint(_msgSender(), s_tokenCounter);
         s_tokenToPrice[s_tokenCounter] = priceLimit;
         s_tokenCounter = s_tokenCounter + 1;
+        _safeMint(_msgSender(), s_tokenCounter);
+        emit NftMinted(s_tokenCounter, priceLimit);
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
