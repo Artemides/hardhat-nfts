@@ -50,7 +50,9 @@ const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
 
     const svgTokenUri = await svgNft.tokenURI(1);
 
-    // console.log({ hiosNftUri, randomNftUri, svgTokenUri });
+    console.log({ hiosNftUri, randomNftUri, svgTokenUri });
 };
 
 export default mintNfts;
+
+mintNfts.tags = ["all", "mint"];

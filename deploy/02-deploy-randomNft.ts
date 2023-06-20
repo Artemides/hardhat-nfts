@@ -3,6 +3,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { developmentChains, networkConfig } from "../hardhat.config.helper";
 import { VRFCoordinatorV2Mock } from "../typechain-types";
 import { uploadFilesToIPFS, uploadJsonToIpfs } from "../utils/uploadIPFS";
+import { verify } from "../utils/verify";
 
 const tokenMetadataTemplate = {
     name: "",
@@ -13,10 +14,10 @@ const tokenMetadataTemplate = {
 
 const FUND_LINK_AMOUNT = ethers.utils.parseUnits("10");
 let nftUris: string[] = [
-    "QmdG1pW9pQNZQo9HxupQkQAo6E9FphJLxx45TQDsHAaZPn",
-    "QmTKDLnaJAKQCvR5F64Grav2WPkbkvvVvV5mwu7SgdEz96",
-    "Qmdu9QT6KX6z3LTFfW9KR1HFGJAw91F9CAmaam4irLM9Lh",
-    "Qmangrbqwsy3aGHfgwqDcy1LiYzrC1jfqh93XAfbSokD4B",
+    "ipfs://QmdG1pW9pQNZQo9HxupQkQAo6E9FphJLxx45TQDsHAaZPn",
+    "ipfs://QmTKDLnaJAKQCvR5F64Grav2WPkbkvvVvV5mwu7SgdEz96",
+    "ipfs://Qmdu9QT6KX6z3LTFfW9KR1HFGJAw91F9CAmaam4irLM9Lh",
+    "ipfs://Qmangrbqwsy3aGHfgwqDcy1LiYzrC1jfqh93XAfbSokD4B",
 ];
 
 const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
@@ -71,6 +72,9 @@ const randomNFT = async (hre: HardhatRuntimeEnvironment) => {
 
     if (vrfCoordinatorV2Mock) {
         vrfCoordinatorV2Mock.addConsumer(subscriptionId, randomNFT.address);
+    }
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+        await verify(randomNFT.address, args);
     }
 };
 

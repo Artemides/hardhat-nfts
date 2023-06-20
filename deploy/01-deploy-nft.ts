@@ -28,4 +28,4 @@ const HiosNft = async (hre: HardhatRuntimeEnvironment) => {
 };
 
 export default HiosNft;
-HiosNft.tags = ["all", "token"];
+HiosNft.tags = ["all", "token", "main"];

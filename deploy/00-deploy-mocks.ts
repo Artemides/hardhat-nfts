@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { developmentChains } from "../hardhat.config.helper";
 import { ethers, network } from "hardhat";
+import { verify } from "../utils/verify";
 const BASE_FEE = ethers.utils.parseEther("0.25");
 const GAS_PRICE_LINK = 1e9;
 

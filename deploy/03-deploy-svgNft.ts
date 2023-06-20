@@ -41,4 +41,4 @@ const svgHiosToken = async (hre: HardhatRuntimeEnvironment) => {
 
 export default svgHiosToken;
 
-svgHiosToken.tags = ["all", "mocks", "svgNft"];
+svgHiosToken.tags = ["all", "main", "svgNft"];
