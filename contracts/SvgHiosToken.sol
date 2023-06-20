@@ -49,7 +49,7 @@ contract SvgHiosToken is ERC721 {
         string memory imageURI = i_sadTokenURI;
         int256 priceLimit = s_tokenToPrice[tokenId];
         (, int256 priceFeed, , , ) = i_priceFeed.latestRoundData();
-        if (priceLimit > priceFeed) {
+        if (priceLimit <= priceFeed) {
             imageURI = i_happyTokeniURI;
         }
         // determine which nft is gonna be returned, based on the minting price feed range
@@ -68,7 +68,7 @@ contract SvgHiosToken is ERC721 {
                                 name(),
                                 '",',
                                 '"description":"And NFT that changes besed on the Eth price",',
-                                "   ,",
+                                '"attributes":[{"trait_type":"coolness","value":100}],',
                                 '"image":"',
                                 imageURI,
                                 '"'
