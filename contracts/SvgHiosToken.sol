@@ -6,10 +6,6 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "hardhat/console.sol";
 
 contract SvgHiosToken is ERC721 {
-    // function to mint
-    // store our nfts
-    // logic to determine when to show x or y
-    //data:image/svg+xml;base65,....
     uint256 s_tokenCounter;
     string private i_sadTokenURI;
     string private i_happyTokeniURI;
