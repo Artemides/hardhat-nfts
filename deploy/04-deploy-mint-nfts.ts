@@ -1,7 +1,8 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { HiosNft, RandomNft, VRFCoordinatorV2Mock } from "../typechain-types";
+import { HiosNft, RandomNft, SvgHiosToken, VRFCoordinatorV2Mock } from "../typechain-types";
 import { BigNumber } from "ethers";
+import { developmentChains } from "../hardhat.config.helper";
 
 const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
     const {
@@ -16,13 +17,14 @@ const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
 
     const randomNFT: RandomNft = await ethers.getContract("RandomNft", deployer);
     const mintiRandomNftFee = await randomNFT.getMintingFee();
-    const requestRandomNftTx = await randomNFT.requestRandomNFT({ value: mintiRandomNftFee });
-    const requestRandomNftReceipt = await requestRandomNftTx.wait(1);
 
     await new Promise(async (resolve, reject) => {
         randomNFT.once("NftMinted", () => {
             resolve(true);
         });
+        const requestRandomNftTx = await randomNFT.requestRandomNFT({ value: mintiRandomNftFee });
+        const requestRandomNftReceipt = await requestRandomNftTx.wait(1);
+        if (!developmentChains.includes(network.name)) return resolve(true);
 
         const events = requestRandomNftReceipt.events;
         if (!events) return reject();
@@ -40,4 +42,15 @@ const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
     });
 
     const randomNftUri = await randomNFT.tokenURI(0);
+
+    const svgNft: SvgHiosToken = await ethers.getContract("SvgHiosToken", deployer);
+    const priceThreshold = ethers.utils.parseEther("2500");
+    const mintinSvgNftTx = await svgNft.mint(priceThreshold);
+    await mintinSvgNftTx.wait(1);
+
+    const svgTokenUri = await svgNft.tokenURI(0);
+
+    console.log({ hiosNftUri, randomNftUri, svgTokenUri });
 };
+
+export default mintNfts;
