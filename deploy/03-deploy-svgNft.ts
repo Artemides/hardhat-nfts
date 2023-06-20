@@ -10,8 +10,8 @@ const svgHiosToken = async (hre: HardhatRuntimeEnvironment) => {
     } = hre;
     const { deployer } = await getNamedAccounts();
     const chainId = network.config.chainId ?? "";
-    let sadTokenSvg = fs.readFileSync("./images/svg/happy.svg", { encoding: "utf8" });
-    let happyTokenSvg = fs.readFileSync("./images/svg/sad.svg", { encoding: "utf8" });
+    let sadTokenSvg = fs.readFileSync("./images/svg/sad.svg", { encoding: "utf8" });
+    let happyTokenSvg = fs.readFileSync("./images/svg/happy.svg", { encoding: "utf8" });
     let pricefeedAddress;
     let args = [];
 
