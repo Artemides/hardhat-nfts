@@ -54,10 +54,6 @@ contract SvgHiosToken is ERC721 {
         if (priceLimit <= priceFeed) {
             imageURI = i_happyTokeniURI;
         }
-        // determine which nft is gonna be returned, based on the minting price feed range
-        // use aggregatorv3 for that
-        //
-        console.log("priceLimit", uint256(priceFeed));
 
         return
             string(
