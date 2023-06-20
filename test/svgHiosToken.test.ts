@@ -66,11 +66,24 @@ const HAPPY_SVG_URI =
 
               it("Returns a Happy face NFT is the current price is greater or equal than the threshold", async () => {
                   const { answer } = await aggregatorV3.latestRoundData();
-                  const priceThreshold = answer.sub(1).toString();
+                  const priceOffset = 1;
+                  const priceThreshold = answer.sub(priceOffset).toString();
+
                   const mint = await svgHiosToken.mint(priceThreshold);
                   await mint.wait(1);
                   const tokenUri = await svgHiosToken.tokenURI(1);
                   assert.equal(tokenUri, HAPPY_TOKEN_URI);
+              });
+
+              it("Returns a Sad face NFT is the current price is lower than the threshold", async () => {
+                  const { answer } = await aggregatorV3.latestRoundData();
+                  const priceOffset = 1;
+                  const priceThreshold = answer.add(priceOffset).toString();
+                  console.log({ pricefeed: answer.toString(), limit: priceThreshold });
+                  const mint = await svgHiosToken.mint(priceThreshold);
+                  await mint.wait(1);
+                  const tokenUri = await svgHiosToken.tokenURI(1);
+                  assert.equal(tokenUri, SAD_TOKEN_URI);
               });
           });
       });

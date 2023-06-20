@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "hardhat/console.sol";
 
 contract SvgHiosToken is ERC721 {
     // function to mint
@@ -38,8 +39,8 @@ contract SvgHiosToken is ERC721 {
     }
 
     function mint(int256 priceLimit) public {
-        s_tokenToPrice[s_tokenCounter] = priceLimit;
         s_tokenCounter = s_tokenCounter + 1;
+        s_tokenToPrice[s_tokenCounter] = priceLimit;
         _safeMint(_msgSender(), s_tokenCounter);
         emit NftMinted(s_tokenCounter, priceLimit);
     }
@@ -49,12 +50,14 @@ contract SvgHiosToken is ERC721 {
         string memory imageURI = i_sadTokenURI;
         int256 priceLimit = s_tokenToPrice[tokenId];
         (, int256 priceFeed, , , ) = i_priceFeed.latestRoundData();
+
         if (priceLimit <= priceFeed) {
             imageURI = i_happyTokeniURI;
         }
         // determine which nft is gonna be returned, based on the minting price feed range
         // use aggregatorv3 for that
         //
+        console.log("priceLimit", uint256(priceFeed));
 
         return
             string(
