@@ -44,5 +44,13 @@ const HAPPY_SVG_URI =
                       "NftMinted"
                   );
               });
+              it("Increases the token counter in one", async () => {
+                  const priceThreshold = ethers.utils.parseEther("2000");
+                  await svgHiosToken.mint(priceThreshold);
+
+                  const tokenCounter = await svgHiosToken.getTokenCounter();
+
+                  assert.equal(tokenCounter.toString(), "1");
+              });
           });
       });
