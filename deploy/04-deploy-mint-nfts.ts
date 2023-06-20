@@ -48,7 +48,7 @@ const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
     const mintinSvgNftTx = await svgNft.mint(priceThreshold);
     await mintinSvgNftTx.wait(1);
 
-    const svgTokenUri = await svgNft.tokenURI(0);
+    const svgTokenUri = await svgNft.tokenURI(1);
 
     console.log({ hiosNftUri, randomNftUri, svgTokenUri });
 };
