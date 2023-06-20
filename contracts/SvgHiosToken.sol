@@ -68,7 +68,7 @@ contract SvgHiosToken is ERC721 {
                                 name(),
                                 '",',
                                 '"description":"And NFT that changes besed on the Eth price",',
-                                '"attributes":[{"trait_type":"coolness","value":100}],',
+                                "   ,",
                                 '"image":"',
                                 imageURI,
                                 '"'
@@ -78,5 +78,21 @@ contract SvgHiosToken is ERC721 {
                     )
                 )
             );
+    }
+
+    function getHappySvg() public view returns (string memory) {
+        return i_happyTokeniURI;
+    }
+
+    function getSadSvg() public view returns (string memory) {
+        return i_sadTokenURI;
+    }
+
+    function getPriceFeedAddress() public view returns (AggregatorV3Interface) {
+        return i_priceFeed;
+    }
+
+    function getTokenCounter() public view returns (uint256) {
+        return s_tokenCounter;
     }
 }
