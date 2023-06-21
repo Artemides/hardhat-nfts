@@ -7,20 +7,21 @@ import "dotenv/config";
 
 const localhostRpcUrl = process.env.LOCALHOST_RPC_URL || "";
 const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL || "";
-
+const metamaskAccountAddress = process.env.METAMASK_PRIVATE_KEY || "";
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,
         },
-        local: {
+        localhost: {
             url: localhostRpcUrl,
             chainId: 31337,
         },
         sepolia: {
             url: sepoliaRpcUrl,
             chainId: 11155111,
+            accounts: [metamaskAccountAddress],
         },
     },
     solidity: {

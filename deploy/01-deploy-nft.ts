@@ -12,7 +12,7 @@ const HiosNft = async (hre: HardhatRuntimeEnvironment) => {
     } = hre;
 
     const deployer = (await getNamedAccounts()).deployer;
-
+    console.log({ deployer });
     log("deploying nft");
     const hiosNft = await deploy("HiosNft", {
         from: deployer,

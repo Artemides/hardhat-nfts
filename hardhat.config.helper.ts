@@ -31,4 +31,4 @@ export const networkConfig: NetworkConfig = {
     },
 };
 
-export const developmentChains = ["local", "hardhat"];
+export const developmentChains = ["localhost", "hardhat"];
