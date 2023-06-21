@@ -8,6 +8,7 @@ import "dotenv/config";
 const localhostRpcUrl = process.env.LOCALHOST_RPC_URL || "";
 const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL || "";
 const metamaskAccountAddress = process.env.METAMASK_PRIVATE_KEY || "";
+const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
     networks: {
@@ -24,10 +25,13 @@ const config: HardhatUserConfig = {
             accounts: [metamaskAccountAddress],
         },
     },
+    etherscan: {
+        apiKey: etherscanApiKey,
+    },
     solidity: {
         compilers: [
             {
-                version: "^0.8.18",
+                version: "0.8.0",
             },
             {
                 version: "0.8.8",

@@ -13,7 +13,7 @@ const mintNfts = async (hre: HardhatRuntimeEnvironment) => {
 
     const hiosNFT: HiosNft = await ethers.getContract("HiosNft", deployer);
     await hiosNFT.mint();
-    const hiosNftUri = await hiosNFT.tokenURI(0);
+    const hiosNftUri = await hiosNFT.tokenURI(1);
 
     const randomNFT: RandomNft = await ethers.getContract("RandomNft", deployer);
     const mintiRandomNftFee = await randomNFT.getMintingFee();
